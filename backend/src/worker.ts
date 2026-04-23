@@ -3,7 +3,9 @@ import IORedis from "ioredis";
 import { processImage } from "./services/image.service";
 
 const connection = new IORedis({
-    maxRetriesPerRequest: null
+    host: process.env.REDIS_HOST || "localhost",
+    port: 6379,
+    maxRetriesPerRequest: null,
 });
 
 const worker = new Worker(
@@ -13,7 +15,7 @@ const worker = new Worker(
 
         const { type, filePath, options } = job.data;
 
-        const result = await processImage(type , filePath , options);
+        const result = await processImage(type, filePath, options);
         return result;
     },
     { connection }

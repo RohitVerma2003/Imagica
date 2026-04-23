@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { imageQueue } from "../config/queue";
+import path from 'path';
 
 const queueDeleteConfig = { removeOnComplete: { age: 300, count: 100 }, removeOnFail: 120 }
 
@@ -17,7 +18,7 @@ export const uploadImage = async (req: Request, res: Response) => {
 
         const jobData = {
             type,
-            filePath: req.file.path,
+            filePath: path.resolve(req.file.path),
             options: {
                 width,
                 height,
