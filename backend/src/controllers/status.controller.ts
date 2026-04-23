@@ -8,7 +8,7 @@ export const getJobStatus = async (req: Request, res: Response) => {
     const job = await imageQueue.getJob(String(jobId));
 
     if (!job) {
-      return res.status(404).json({ message: "Job not found" });
+      return res.status(404).json({ message: "Job expired or not found" });
     }
 
     const state = await job.getState();

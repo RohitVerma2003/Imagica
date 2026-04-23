@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { imageQueue } from "../config/queue";
 
+const queueDeleteConfig = { removeOnComplete: { age: 300, count: 100 }, removeOnFail: 120 }
+
 export const uploadImage = async (req: Request, res: Response) => {
     try {
         const { type, width, height, quality } = req.body;
@@ -23,7 +25,7 @@ export const uploadImage = async (req: Request, res: Response) => {
             },
         };
 
-        const job = await imageQueue.add("process-image", jobData);
+        const job = await imageQueue.add("process-image", jobData, queueDeleteConfig);
 
         return res.status(200).json({
             message: "Job received",
