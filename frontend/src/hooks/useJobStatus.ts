@@ -2,39 +2,42 @@ import { useEffect, useState } from "react";
 import { getJobStatus } from "../services/image.service";
 
 export const useJobStatus = (jobId?: string) => {
-    const [data, setData] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!jobId) return;
+  useEffect(() => {
+    if (!jobId) return;
 
-        let retries = 0;
-        const MAX_RETRIES = 30;
+    let retries = 0;
+    const MAX_RETRIES = 30;
 
-        const interval = setInterval(async () => {
-            try {
-                const res = await getJobStatus(jobId);
-                setData(res);
+    const interval = setInterval(async () => {
+      try {
+        const res = await getJobStatus(jobId);
+        setData(res);
 
-                if (res.state === "completed" || res.state === "failed") {
-                    clearInterval(interval);
-                }
+        if (res.state === "completed" || res.state === "failed") {
+          clearInterval(interval);
+          setLoading(false);
+        }
 
-                retries++;
+        retries++;
 
-                if (retries >= MAX_RETRIES) {
-                    clearInterval(interval);
-                    setError("Processing timeout");
-                }
-            } catch (err) {
-                console.error("Polling error:", err);
-                clearInterval(interval);
-                setError("Server error");
-            }
-        }, 2000);
+        if (retries >= MAX_RETRIES) {
+          clearInterval(interval);
+          setError("Processing timeout");
+          setLoading(false);
+        }
+      } catch (err) {
+        clearInterval(interval);
+        setError("Server error");
+        setLoading(false);
+      }
+    }, 2000);
 
-        return () => clearInterval(interval);
-    }, [jobId]);
+    return () => clearInterval(interval);
+  }, [jobId]);
 
-    return { data, error };
+  return { data, error, loading };
 };
