@@ -1,12 +1,14 @@
 import { Worker } from "bullmq";
 import IORedis from "ioredis";
-import { processImage } from "./services/image.service";
+import { ImageService } from "./services/image.service";
 
 const connection = new IORedis({
     host: process.env.REDIS_HOST || "localhost",
     port: 6379,
     maxRetriesPerRequest: null,
 });
+
+const imageService = new ImageService();
 
 const worker = new Worker(
     "image-processing",
@@ -15,7 +17,7 @@ const worker = new Worker(
 
         const { type, filePath, options } = job.data;
 
-        const result = await processImage(type, filePath, options);
+        const result = await imageService.processImage(type, filePath, options);
         return result;
     },
     { connection }

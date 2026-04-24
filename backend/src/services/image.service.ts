@@ -2,40 +2,72 @@ import sharp from "sharp";
 import path from "path";
 import fs from "fs";
 
-export const processImage = async (
-  type: string,
-  filePath: string,
-  options: any
-) => {
-  const fileName = path.basename(filePath);
+interface ImageOptions {
+  filePath: string;
+  options: {
+    width?: number;
+    height?: number;
+    quality?: number;
+  };
+}
 
-  const outputFileName = `${Date.now()}-${fileName}`;
-  const outputPath = path.join("processed", outputFileName);
-
+const ensureProcessedDir = () => {
   if (!fs.existsSync("processed")) {
     fs.mkdirSync("processed");
   }
+};
 
-  if (type === "compress") {
-    const quality = Number(options.quality) || 80;
+class ImageCompressService {
+  async process(image: ImageOptions) {
+    const quality = Number(image.options.quality) || 80;
+    const fileName = path.basename(image.filePath);
 
-    await sharp(filePath)
+    const outputFileName = `${Date.now()}-${fileName}`;
+    const outputPath = path.join("processed", outputFileName);
+
+    ensureProcessedDir();
+
+    await sharp(image.filePath)
       .jpeg({ quality })
       .toFile(outputPath);
 
     return { outputPath };
   }
+}
 
-  if (type === "resize") {
-    const width = Number(options.width);
-    const height = Number(options.height);
+class ImageResizeService {
+  async process(image: ImageOptions) {
+    const width = Number(image.options.width);
+    const height = Number(image.options.height);
 
-    await sharp(filePath)
+    const fileName = path.basename(image.filePath);
+    const outputFileName = `${Date.now()}-${fileName}`;
+    const outputPath = path.join("processed", outputFileName);
+
+    ensureProcessedDir();
+
+    await sharp(image.filePath)
       .resize(width, height)
       .toFile(outputPath);
 
     return { outputPath };
   }
+}
 
-  throw new Error("Invalid job type");
-};
+export class ImageService {
+  private compressService = new ImageCompressService();
+  private resizeService = new ImageResizeService();
+
+  async processImage(
+    type: string,
+    filePath: string,
+    options: any
+  ) {
+    const payload: ImageOptions = { filePath, options };
+
+    if (type === "compress") return this.compressService.process(payload);
+    if (type === "resize") return this.resizeService.process(payload);
+
+    throw new Error("Invalid job type");
+  }
+}
