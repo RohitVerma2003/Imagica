@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { imageQueue } from "../config/queue";
 import path from 'path';
 
-const queueDeleteConfig = { removeOnComplete: { age: 300, count: 100 }, removeOnFail: 120 }
+const queueAddConfig = { attempts: 3, backoff: { type: "exponential", delay: 2000 }, removeOnComplete: { age: 300, count: 100 }, removeOnFail: 120 }
 
 export const uploadImage = async (req: Request, res: Response) => {
     try {
@@ -26,7 +26,7 @@ export const uploadImage = async (req: Request, res: Response) => {
             },
         };
 
-        const job = await imageQueue.add("process-image", jobData, queueDeleteConfig);
+        const job = await imageQueue.add("process-image", jobData, queueAddConfig);
 
         return res.status(200).json({
             message: "Job received",
