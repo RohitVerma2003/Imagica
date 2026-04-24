@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Services from "./pages/Services";
-import Compress from "./pages/Compress";
-import Resize from "./pages/Resize";
 import Result from "./pages/Result";
 import Navbar from "./components/Navbar";
+import ToolPage from "./pages/ToolPage";
 
 function App() {
   return (
@@ -14,8 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/compress" element={<Compress />} />
-          <Route path="/resize" element={<Resize />} />
+          <Route path="/tool/:type" element={<ToolPage />} />
           <Route path="/result/:jobId" element={<Result />} />
         </Routes>
       </div>

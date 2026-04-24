@@ -51,7 +51,8 @@ export const downloadImage = async (req: Request, res: Response) => {
 
         const contentType = mime.lookup(filePath) || "application/octet-stream";
         res.setHeader("Content-Type", contentType);
-
+        
+        res.flushHeaders();
         const fileStream = fs.createReadStream(filePath);
 
         fileStream.pipe(res);

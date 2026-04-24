@@ -6,14 +6,14 @@ const queueAddConfig = { attempts: 3, backoff: { type: "exponential", delay: 200
 
 export const uploadImage = async (req: Request, res: Response) => {
     try {
-        const { type, width, height, quality } = req.body;
+        const { type, width, height, quality, x, y, angle, format } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded" });
         }
 
         if (!type) {
-            return res.status(400).json({ message: "Type is required (compress/resize)" });
+            return res.status(400).json({ message: "Type is required" });
         }
 
         const jobData = {
@@ -23,6 +23,10 @@ export const uploadImage = async (req: Request, res: Response) => {
                 width,
                 height,
                 quality,
+                x,
+                y,
+                angle,
+                format
             },
         };
 

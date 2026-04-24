@@ -8,16 +8,19 @@ import { errorHandler } from './middleware/error.middleware';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    exposedHeaders: ["Content-Disposition"],
+}));
 app.use(express.json());
 
-app.use("/upload" , uploadRoutes);
-app.use("/status" , statusRoutes);
+app.use("/upload", uploadRoutes);
+app.use("/status", statusRoutes);
 app.use("/download", downloadRoutes);
 
 app.use(errorHandler);
 
-app.get("/" , (req , res)=>{
+app.get("/", (req, res) => {
     res.send("Imagica is running");
 })
 

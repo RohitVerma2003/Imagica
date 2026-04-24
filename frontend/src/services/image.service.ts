@@ -26,7 +26,20 @@ export const downloadImage = async (jobId: string) => {
 
         const link = document.createElement("a");
         link.href = url;
-        link.download = `processed-image-${jobId}.jpg`;
+
+        // 🔥 Extract filename from headers
+        let fileName = "download";
+
+        const disposition = response.headers["content-disposition"];
+
+        if (disposition) {
+            const match = disposition.match(/filename="?([^"]+)"?/);
+            if (match && match[1]) {
+                fileName = match[1];
+            }
+        }
+
+        link.download = fileName; // ✅ correct filename with extension
 
         document.body.appendChild(link);
         link.click();
