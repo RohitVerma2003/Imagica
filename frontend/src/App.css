@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.input {
+  @apply bg-slate-900 border border-slate-700 p-2 rounded-lg w-full;
+}   

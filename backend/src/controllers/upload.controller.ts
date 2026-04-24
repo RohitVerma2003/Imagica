@@ -30,7 +30,7 @@ export const uploadImage = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             message: "Job received",
-            job: job.id,
+            jobId: job.id,
         });
     } catch (error) {
         return res.status(500).json({ message: "Error", error });
