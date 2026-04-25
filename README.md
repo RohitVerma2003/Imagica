@@ -83,13 +83,25 @@ This design ensures **high performance, scalability, and fault tolerance**.
 * Make sure you have Docker and Docker Compose installed and also the redis server must on.
 
 ```bash
+# Clone the Repository
+git clone https://github.com/RohitVerma2003/Imagica
+cd Imagica
+
 # Build and start all services (API + Worker + Redis)
+cd backend
 docker-compose up --build
 
+# Start the frontend
+cd..
+cd frontend
+npm run dev
+
 # Run in detached mode (optional)
+cd backend
 docker-compose up -d
 
 # Stop services
+cd backend
 docker-compose down
 ```
 
